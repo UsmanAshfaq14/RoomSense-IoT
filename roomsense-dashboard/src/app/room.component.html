@@ -1,0 +1,247 @@
+@if (error()) { <p class="banner error" role="alert">{{ error() }}</p> }
+@if (notice()) { <div class="toast" role="status"><span>{{ notice() }}</span><button type="button" class="close" (click)="notice.set('')" aria-label="Close message">×</button></div> }
+
+@if (room(); as r) {
+  <section class="room-head">
+    <div class="room-title">
+      <a routerLink="/" class="back">← All rooms</a>
+      <h1>{{ r.name }} <span class="code">{{ r._id }}</span></h1>
+      <p class="sub">
+        @if (r.currentBooking; as b) {
+          In use: {{ bookingLabel(b) }}, until {{ fmtTime(b.end) }}
+        } @else {
+          @if (r.nextBooking; as n) {
+            Next: {{ bookingLabel(n) }}, {{ fmtDay(n.start) }} {{ fmtTime(n.start) }}–{{ fmtTime(n.end) }}
+          } @else {
+            No upcoming booking
+          }
+        }
+      </p>
+    </div>
+    <div class="chips">
+      <span class="chip state" [attr.data-state]="r.state">{{ r.state }}</span>
+      @if (r.hasNode !== false) {
+        <span class="chip" [class.ok]="r.nodeStatus === 'online'" [class.bad]="r.nodeStatus !== 'online'">Room node {{ r.nodeStatus }}</span>
+      } @else {
+        <span class="chip">Timetable only, no sensors</span>
+      }
+      @if (r.airAlert) { <span class="chip warn">Ventilate</span> }
+    </div>
+  </section>
+
+  @if (strip(); as st) {
+    <section class="strip" [attr.data-tone]="st.tone" aria-label="Room status now">
+      <b role="status">{{ st.head }}</b>
+      @for (i of st.items; track i.text) {
+        <span [class.warn-text]="i.tone === 'warn'" [class.ok-text]="i.tone === 'ok'">{{ i.text }}@if (i.count) { <b class="count" aria-hidden="true">{{ i.count }}</b>@if (i.at) { <span class="sr-only"> at {{ i.at }}</span> } }</span>
+      }
+    </section>
+  }
+
+  @if (r.hasNode !== false) {
+    <section class="tiles" aria-label="Latest sensor values">
+      <div class="tile">
+        <div class="tile-label">Temperature</div>
+        <div class="tile-value">{{ r.latest.temperature ? (r.latest.temperature.value | number: '1.1-1') : '–' }}<small>°C</small></div>
+        <div class="tile-sub">@if (silent(r.latest.temperature); as m) { <span class="warn-text">{{ m }}</span> } @else { target {{ r.state === 'FREE' ? r.ecoC + ' °C eco' : r.comfortC + ' °C comfort' }} }</div>
+      </div>
+      <div class="tile">
+        <div class="tile-label">Humidity</div>
+        <div class="tile-value">{{ r.latest.humidity ? (r.latest.humidity.value | number: '1.0-0') : '–' }}<small>%</small></div>
+        <div class="tile-sub">@if (silent(r.latest.humidity); as m) { <span class="warn-text">{{ m }}</span> } @else { ventilate above {{ r.humidityMax ?? r.settingsDefaults['humidityMax'] }} % }</div>
+      </div>
+      <div class="tile">
+        <div class="tile-label">Air quality</div>
+        <div class="tile-value">{{ r.latest.gas ? (r.latest.gas.value / 1000 | number: '1.0-0') : '–' }}<small>kΩ</small></div>
+        <div class="tile-sub">@if (silent(r.latest.gas); as m) { <span class="warn-text">{{ m }}</span> } @else if (r.gasReady === false) { <span class="warn-text">sensor warming up (first 30 min), not used yet</span> } @else { higher is cleaner }</div>
+      </div>
+      <div class="tile">
+        <div class="tile-label">Light</div>
+        <div class="tile-value">{{ r.latest.light ? (r.latest.light.value | number: '1.0-0') : '–' }}<small>lux</small></div>
+        <div class="tile-sub">@if (silent(r.latest.light); as m) { <span class="warn-text">{{ m }}</span> } @else { lights on below {{ r.luxThreshold }} lux }</div>
+      </div>
+      <div class="tile">
+        <div class="tile-label">Motion</div>
+        <div class="tile-value">{{ r.latest.presence ? (r.latest.presence.value ? 'Yes' : 'No') : '–' }}</div>
+        <div class="tile-sub">{{ r.latest.presence ? 'since ' + fmtAgo(r.latest.presence.ts) : 'no reading yet' }}</div>
+      </div>
+      <div class="tile">
+        <div class="tile-label">Pressure</div>
+        <div class="tile-value">{{ r.latest.pressure ? (r.latest.pressure.value | number: '1.0-0') : '–' }}<small>hPa</small></div>
+        <div class="tile-sub">{{ r.lastSeen ? 'node seen ' + fmtAgo(r.lastSeen) : '' }}</div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head">
+        <h2>Controls</h2>
+        <p class="hint">Sent from this page through the broker to the Pi. A manual choice holds for {{ r.settingsDefaults['overrideMin'] }} min, then the automatic rules take over.</p>
+      </div>
+      <div class="controls">
+        @for (a of actuatorList; track a.name) {
+          <div class="control">
+            <div>
+              <div class="control-name">{{ a.label }}</div>
+              <div class="control-state">
+                {{ actuatorState(a.name) }}
+                @if (overrideUntil(a.name); as until) { <span class="tag manual">manual until {{ until }}</span> }
+                @else { <span class="tag">automatic</span> }
+              </div>
+            </div>
+            <div class="seg" role="group" [attr.aria-label]="a.label">
+              <button type="button" (click)="setActuator(a.name, 'on')" [disabled]="busy() === a.name" [attr.aria-pressed]="mode(a.name) === 'on'">On</button>
+              <button type="button" (click)="setActuator(a.name, 'off')" [disabled]="busy() === a.name" [attr.aria-pressed]="mode(a.name) === 'off'">Off</button>
+              <button type="button" (click)="setActuator(a.name, 'auto')" [disabled]="busy() === a.name" [attr.aria-pressed]="mode(a.name) === 'auto'">Auto</button>
+            </div>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card-head row">
+        <h2>{{ isToday() ? 'Today' : tlDateLabel() }}</h2>
+        <div class="seg" role="group" aria-label="Day">
+          <button type="button" (click)="shiftDay(-1)" aria-label="Previous day">‹</button>
+          <button type="button" (click)="shiftDay(0)" [class.on]="isToday()" [attr.aria-pressed]="isToday()">Today</button>
+          <button type="button" (click)="shiftDay(1)" aria-label="Next day">›</button>
+        </div>
+      </div>
+      <app-day-timeline [data]="timeline()" />
+    </section>
+
+    <section class="card">
+      <div class="card-head row">
+        <h2>History</h2>
+        <div class="seg" role="group" aria-label="Chart">
+          <button type="button" [class.on]="chartKind() === 'climate'" [attr.aria-pressed]="chartKind() === 'climate'" (click)="setChart('climate')">Climate</button>
+          <button type="button" [class.on]="chartKind() === 'light'" [attr.aria-pressed]="chartKind() === 'light'" (click)="setChart('light')">Light</button>
+          <button type="button" [class.on]="chartKind() === 'presence'" [attr.aria-pressed]="chartKind() === 'presence'" (click)="setChart('presence')">Motion</button>
+          <button type="button" [class.on]="chartKind() === 'air'" [attr.aria-pressed]="chartKind() === 'air'" (click)="setChart('air')">Air</button>
+        </div>
+        <div class="seg" role="group" aria-label="Period">
+          @for (h of [1, 6, 24]; track h) {
+            <button type="button" [class.on]="hours() === h" [attr.aria-pressed]="hours() === h" (click)="setHours(h)">{{ h }} h</button>
+          }
+        </div>
+      </div>
+      <app-chart [series]="series()" [yLabel]="chartKind() === 'climate' ? '°C' : chartKind() === 'light' ? 'lux' : chartKind() === 'air' ? 'kΩ' : ''"
+                 [y2Label]="chartKind() === 'climate' || chartKind() === 'air' ? '%' : ''" [label]="chartLabel()" />
+    </section>
+  }
+
+  <div class="two-col">
+    <section class="card">
+      <div class="card-head"><h2>{{ r.hasNode === false ? 'Timetable' : 'Bookings' }}</h2></div>
+      @if (r.hasNode === false) {
+        <p class="hint">This room has no RoomSense node yet, so it cannot be booked here: nobody could badge in and a no-show would go unseen. It follows the university timetable only.</p>
+      } @else {
+      <p class="form-note">Fields marked <span class="req" aria-hidden="true">*</span><span class="sr-only">with a star</span> are required.</p>
+      <form class="book-form" (ngSubmit)="book()" [attr.aria-describedby]="bookError() ? 'book-error' : null">
+        <label><span>For <span class="req" aria-hidden="true">*</span></span>
+          <select name="user" [(ngModel)]="bookingForm.userId" required [attr.aria-invalid]="bookInvalid().includes('user') || null" [attr.aria-describedby]="bookInvalid().includes('user') ? 'book-error' : null">
+            <option value="" disabled>Choose a person</option>
+            @for (u of users(); track u._id) { <option [value]="u._id">{{ u.name }}</option> }
+          </select>
+        </label>
+        <label><span>Date <span class="req" aria-hidden="true">*</span></span> <input type="date" name="date" [(ngModel)]="bookingForm.date" required [attr.aria-invalid]="bookInvalid().includes('time') || null" [attr.aria-describedby]="bookInvalid().includes('time') ? 'book-error' : null"></label>
+        <label><span>Start <span class="req" aria-hidden="true">*</span></span> <input type="time" name="time" [(ngModel)]="bookingForm.time" required [attr.aria-invalid]="bookInvalid().includes('time') || null" [attr.aria-describedby]="bookInvalid().includes('time') ? 'book-error' : null"></label>
+        <label>Length
+          <select name="duration" [(ngModel)]="bookingForm.duration">
+            @for (m of [30, 60, 90, 120, 180]; track m) { <option [ngValue]="m">{{ m }} min</option> }
+          </select>
+        </label>
+        <label class="grow">Note <input type="text" name="title" [(ngModel)]="bookingForm.title" maxlength="60" placeholder="optional"></label>
+        <button type="submit" class="primary">Book</button>
+      </form>
+      @if (bookError()) { <p class="field-error" id="book-error" role="alert">{{ bookError() }}</p> }
+      }
+
+      @if (upcoming().length) {
+        <ul class="list">
+          @for (b of upcoming(); track b._id) {
+            <li>
+              <span class="when">{{ fmtDay(b.start) }} · {{ fmtTime(b.start) }}–{{ fmtTime(b.end) }}</span>
+              <span class="what">{{ bookingLabel(b) }}</span>
+              <span class="chip small" [attr.data-status]="b.status">{{ b.status === 'checked_in' ? 'checked in' : 'waiting' }}</span>
+              @if (b.status === 'pending' && b.source !== 'timetable') {
+                <button type="button" class="link" (click)="cancel(b)">Cancel</button>
+              }
+            </li>
+          }
+        </ul>
+      } @else {
+        <p class="empty">{{ r.hasNode === false ? 'No class coming up in the imported timetable.' : 'No upcoming bookings. Book above, or tap a badge on the reader to walk in.' }}</p>
+      }
+      @if (past().length) {
+        <h3>Recent</h3>
+        <ul class="list past">
+          @for (b of past(); track b._id) {
+            <li>
+              <span class="when">{{ fmtDay(b.start) }} · {{ fmtTime(b.start) }}</span>
+              <span class="what">{{ bookingLabel(b) }}</span>
+              <span class="chip small" [attr.data-status]="b.status">{{ b.status === 'unmonitored' ? 'not monitored' : b.status.replace('_', '-') }}</span>
+            </li>
+          }
+        </ul>
+      }
+    </section>
+
+    <section class="card">
+      <div class="card-head"><h2>Activity</h2></div>
+      @if (events().length) {
+        <ul class="log" tabindex="0" aria-label="Activity log, newest first">
+          @for (e of events(); track e._id) {
+            <li><time>{{ fmtWhen(e.ts) }}</time><span>{{ describe(e) }}</span></li>
+          }
+        </ul>
+      } @else {
+        <p class="empty">Nothing yet. Events appear here as they happen.</p>
+      }
+    </section>
+  </div>
+
+  <section class="card">
+    <div class="card-head">
+      <h2>Use and energy, last 7 days</h2>
+      <p class="hint">How long the room was booked against how long people were actually in it.</p>
+    </div>
+    <div class="totals">
+      <div><b>{{ totals().booked / 60 | number: '1.1-1' }} h</b><span>booked</span></div>
+      <div><b>{{ totals().occupied / 60 | number: '1.1-1' }} h</b><span>actually occupied</span></div>
+      <div><b>{{ totals().booked ? (totals().occupied / totals().booked * 100 | number: '1.0-0') + ' %' : '–' }}</b><span>of booked time used</span></div>
+      <div><b>{{ totals().noShows }}</b><span>no-shows</span></div>
+      <div><b>{{ totals().lightWh / 1000 | number: '1.2-2' }} kWh</b><span>lighting avoided (est.)</span></div>
+      <div><b>{{ totals().heatWh / 1000 | number: '1.2-2' }} kWh</b><span>heating avoided (est.)</span></div>
+    </div>
+    @if (statBars(); as bars) {
+      <app-chart [bars]="bars" yLabel="hours" label="Booked versus occupied hours per day" [height]="200" />
+    } @else {
+      <p class="empty">Figures appear after the first booked minutes.</p>
+    }
+    <p class="note">{{ statsNote() }}</p>
+  </section>
+
+  <section class="card">
+    <div class="card-head row">
+      <h2>Room settings</h2>
+      <button type="button" class="link" (click)="settingsOpen.set(!settingsOpen())">{{ settingsOpen() ? 'Close' : 'Edit' }}</button>
+    </div>
+    @if (settingsOpen()) {
+      <form class="settings" (ngSubmit)="saveSettings()">
+        @for (f of settingFields; track f.key) {
+          <label>{{ f.label }}
+            <span class="with-unit"><input type="number" [name]="f.key" [(ngModel)]="settingsForm[f.key]" [step]="f.step" [attr.aria-invalid]="settingsInvalid() === f.key || null" [attr.aria-describedby]="settingsInvalid() === f.key ? 'settings-error' : null"><span>{{ f.unit }}</span></span>
+          </label>
+        }
+        <button type="submit" class="primary">Save settings</button>
+      </form>
+      @if (settingsError()) { <p class="field-error" id="settings-error" role="alert">{{ settingsError() }}</p> }
+    } @else {
+      <p class="hint">Comfort {{ r.comfortC }} °C, eco {{ r.ecoC }} °C, lights below {{ r.luxThreshold }} lux,
+        no-show after {{ r.graceMin ?? r.settingsDefaults['graceMin'] }} min, release after {{ r.releaseTimeoutMin ?? r.settingsDefaults['releaseTimeoutMin'] }} min without motion.</p>
+    }
+  </section>
+} @else if (!error()) {
+  <p class="empty">Loading…</p>
+}

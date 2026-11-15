@@ -1,0 +1,22 @@
+# Dependencies and build output
+node_modules/
+.angular/
+dist/
+__pycache__/
+*.pyc
+
+# IDE
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# Secrets: MQTT accounts (salted hashes) and the Pi's MQTT password
+mqtt-users.json
+mqtt-password.txt
+broker.txt
+
+# OS
+.DS_Store
+Thumbs.db

@@ -1,0 +1,32 @@
+== broker drops
+0
+== standalone entries
+0
+== starts/connects
+== warnings/errors
+Nov 13 00:01:01 raspberrypi python3[560]: 00:01:01 WARNING a gpiozero background thread stopped (unpack requires a buffer of 16 bytes); the GPIO link check repairs it
+Nov 13 00:01:01 raspberrypi python3[560]: 00:01:01 WARNING pigpio link check failed (unpack requires a buffer of 16 bytes): reconnecting
+== last lines
+-- Journal begins at Wed 2023-05-03 02:36:11 CEST, ends at Fri 2026-11-13 10:08:24 CET. --
+Nov 12 23:54:27 raspberrypi python3[560]: 23:54:27 WARNING cannot reach the broker at 10.12.72.4:1883; trying 192.168.137.1 next
+Nov 12 23:54:37 raspberrypi python3[560]: 23:54:37 INFO connected to 192.168.137.1:1883 as node-ME407
+Nov 12 23:54:37 raspberrypi python3[560]: 23:54:37 INFO broker back: leaving standalone mode, the server's commands apply again
+Nov 13 00:01:01 raspberrypi python3[560]: 00:01:01 WARNING a gpiozero background thread stopped (unpack requires a buffer of 16 bytes); the GPIO link check repairs it
+Nov 13 00:01:01 raspberrypi python3[560]: 00:01:01 WARNING pigpio link check failed (unpack requires a buffer of 16 bytes): reconnecting
+Nov 13 00:01:01 raspberrypi python3[560]: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Nov 13 00:01:01 raspberrypi python3[560]: Can't connect to pigpio at localhost(8888)
+Nov 13 00:01:01 raspberrypi python3[560]: Did you start the pigpio daemon? E.g. sudo pigpiod
+Nov 13 00:01:01 raspberrypi python3[560]: Did you specify the correct Pi host/port in the environment
+Nov 13 00:01:01 raspberrypi python3[560]: variables PIGPIO_ADDR/PIGPIO_PORT?
+Nov 13 00:01:01 raspberrypi python3[560]: E.g. export PIGPIO_ADDR=soft, export PIGPIO_PORT=8888
+Nov 13 00:01:01 raspberrypi python3[560]: Did you specify the correct Pi host/port in the
+Nov 13 00:01:01 raspberrypi python3[560]: pigpio.pi() function? E.g. pigpio.pi('soft', 8888)
+Nov 13 00:01:01 raspberrypi python3[560]: %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+Nov 13 00:01:02 raspberrypi python3[560]: 00:01:02 INFO GPIO link to pigpio rebuilt; outputs restored, motion sensor running again
+== Pi state
+ 10:13:34 up 10:20,  3 users,  load average: 1.02, 1.03, 1.00
+temp=58.0'C
+               total        used        free      shared  buff/cache   available
+Mem:           921Mi       183Mi       258Mi       5.0Mi       479Mi       677Mi
+               Local time: Fri 2026-11-13 10:13:35 CET
+System clock synchronized: yes

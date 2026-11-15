@@ -1,0 +1,122 @@
+RoomSense automated tests, run 2026-11-10T15:07Z (node v22.23.4)
+
+
+
+PASS  free room heats to eco only (17 C > 16.5: heating off)
+PASS  free room: status LED free
+PASS  booking created
+PASS  overlapping booking refused with 409
+PASS  end before start refused with 400
+PASS  still FREE 20 min before the booking
+PASS  RESERVED 14 min before: pre-heat window
+PASS  pre-heat: heating on (17 C < 19 - 0.5)
+PASS  status LED reserved
+PASS  another student is refused  (room booked by someone else)
+PASS  booker checks in early  (checked in until 11:20)
+PASS  room OCCUPIED
+PASS  dark + presence: light on
+PASS  bright daylight: light off
+PASS  200 lux stays off (no flicker around the threshold)
+PASS  100 lux: light on again
+PASS  admin badge allowed while occupied  (admin access)
+PASS  humidity 75 %: fan on
+PASS  humidity 64 %: fan off
+PASS  web override sent
+PASS  override holds: rule does not switch the light back on
+PASS  back to auto: rule turns the light on
+PASS  15 min without motion: light off
+PASS  ...but room still OCCUPIED
+PASS  30 min without motion: room released
+PASS  booking marked released
+PASS  released: heating back to eco (18 C > 16.5: off)
+PASS  second booking created
+PASS  nobody came: no-show after 10 min grace
+PASS  walk-in on a free room  (walk-in until 13:05)
+PASS  same badge again: checked out  (checked out, room released)
+PASS  room FREE after check-out
+PASS  walk-in shortened to end when the next booking starts  (walk-in until 12:30)
+PASS  checked out again  (checked out, room released)
+PASS  10 min before someone else's booking: refused  (room booked by someone else)
+PASS  daily stats: booked and occupied minutes counted  (50 booked, 5 occupied)
+PASS  daily stats: one no-show
+PASS  daily stats: avoided heating estimated after release  (16 Wh)
+PASS  GET /stats
+PASS  settings updated
+PASS  out-of-range setting refused
+PASS  timetable: 2 sessions imported, duplicate dropped  ({"sessionsFound":2,"outsideFilter":0,"fullCalendar":[],"added":2,"alreadyImported":0,"notMonitored":0,"rooms":{"ME407":1,"ME404":1}})
+PASS  re-import adds nothing
+PASS  teacher names are not stored
+PASS  room ME404 created from the timetable (no node)
+PASS  ME404 (no sensor) stays FREE before its class: nothing to preheat
+PASS  ME404 (no sensor): class never judged a no-show  (pending)
+PASS  ME404 RESERVED during its class, from the schedule
+PASS  ME404: no actuator command sent to a room without a node
+PASS  ME404: no usage statistics for a room without a node
+PASS  ME404 FREE after its class
+PASS  ME407 RESERVED before the class
+PASS  class checked in by presence, no badge needed
+PASS  ADE: shared session booked in every listed room  (ME403,ME407)
+PASS  ADE: folded LOCATION line unfolded (ME410 across the fold)  (AF128,ME404,ME405,ME407,ME410,MQ113)
+PASS  ADE: description (teacher names) never stored
+PASS  room calendar recognised (every event lists ME407)  (ME407)
+PASS  group timetable covers no room fully
+PASS  import: running class counted as not monitored  ({"sessionsFound":3,"outsideFilter":0,"fullCalendar":["ME407"],"added":3,"alreadyImported":0,"notMonitored":1,"rooms":{"ME407":3}})
+PASS  import: ME407 marked as full calendar
+PASS  a booking cannot overlap an unmonitored class  (409)
+PASS  unmonitored class is not turned into a no-show  (unmonitored)
+PASS  building: week Mon 21 to Fri 25 Dec
+PASS  building: ME407 full calendar, 3 h of 55 open h scheduled  ({"c":"full","h":3,"p":5})
+PASS  building: saving estimate = heater kW x 7 % x (comfort - eco) x 52 empty h  (24.6 vs 24.6)
+PASS  building: ME404 (partial calendar) has no share or saving
+PASS  building: totals only over full-calendar rooms
+PASS  building: bad prefix refused
+PASS  building: overlapping classes counted once, evening hours split, cancelled ignored  ({"i":4,"o":1,"s":5})
+PASS  node back online: all actuator states re-sent  (status,heating,light,fan)
+PASS  reset dry run changes nothing
+PASS  reset: stats, log, people bookings cleared; judged classes reset  ({"users":3,"stats":3,"events":50,"people":5,"judged":1,"upcoming":3})
+PASS  reset: users and upcoming classes kept
+
+all checks passed
+PASS  broker requires a login
+MQTT connected:    node-ME407
+PASS  node connects and reports online
+PASS  node publishes initial presence
+MQTT connected:    sim
+PASS  climate stored as 4 readings
+PASS  GET /rooms/:id returns latest values
+PASS  GET /readings returns a series
+rejected campus/ME407/sensor/climate: Unexpected token 'o', "not json" is not valid JSON
+rejected campus/ME407/sensor/climate: celsius must be a number between -40 and 85
+PASS  bad payloads rejected and logged
+MQTT disconnected: sim
+PASS  a client cannot send actuator commands
+PASS  POST fan command accepted
+PASS  node applies fan and echoes state
+MQTT connected:    sim
+PASS  node applies light level
+PASS  invalid command refused with 400
+PASS  unknown actuator refused with 404
+PASS  override logged with source web
+PASS  unknown badge denied
+PASS  last unknown badge available for registration
+PASS  user registered
+PASS  same badge cannot be registered twice
+PASS  badge stored only as a hash
+PASS  registered badge granted
+PASS  node received the result
+MQTT login refused: (no username) from 127.0.0.1
+PASS  no login: connection refused  (4)
+MQTT login refused: node-ME407 from 127.0.0.1
+PASS  wrong password: connection refused  (4)
+MQTT connected:    fake-node
+MQTT subscribe refused: node-ME407 -> campus/#
+PASS  node account cannot watch other rooms (campus/#)  (refused)
+PASS  node account can subscribe to its own room  (0)
+MQTT publish refused: node-ME407 -> campus/ME404/sensor/light
+MQTT disconnected: fake-node
+PASS  node account cannot publish for another room
+MQTT disconnected: node-ME407
+PASS  broker marks the node offline (Last Will)
+MQTT disconnected: sim
+
+all checks passed

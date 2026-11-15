@@ -1,0 +1,17 @@
+PASS  first Tab lands on "Skip to content", visible
+PASS  Enter moves focus to the main content
+PASS  next Tab is inside the page, not the menu  (← All rooms)
+FAIL  keyboard walk: 120 Tab presses, every focused control shows a ≥ 2 px focus ring  (30 distinct stops; no ring: INPUTdatenull | INPUTtimenull | INPUTdatenull | INPUTtimenull)
+PASS  activity log reachable by keyboard
+PASS  toggle buttons expose aria-pressed (current choice = true)  (Auto, Auto, Auto, Today, Climate, 6 h)
+PASS  chart: specific label + linked text version of the data  (Temperature and humidity, last 6 h | Temperature (°C): from 16.2 to 18.9, latest 18.7 at 13:55. Humidity (%): from 49 to 52, la)
+PASS  live strip: ticking countdown hidden from screen readers, deadline given as a time  ( at 14:45)
+PASS  booking without a person: error shown, field marked invalid and linked to the message  ({"inv":"true","by":"book-error","msg":"Choose who the booking is for.","role":"alert"})
+PASS  required fields marked with a visible star and an explanation
+PASS  notice still shown after 7 s (no time limit)
+PASS  notice closes with its × button
+PASS  320 px + text spacing, /: no horizontal scroll  (320 vs 320)
+PASS  320 px + text spacing, /rooms/ME407: no horizontal scroll  (320 vs 320)
+PASS  320 px + text spacing, /building: no horizontal scroll  (320 vs 320)
+PASS  320 px + text spacing, /people: no horizontal scroll  (320 vs 320)
+PASS  320 px + text spacing, /timetable: no horizontal scroll  (320 vs 320)

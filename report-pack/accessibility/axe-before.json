@@ -1,0 +1,174 @@
+[
+ {
+  "scheme": "light",
+  "path": "/",
+  "violations": [
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "n": 4,
+    "sample": [
+     ".room-card[href=\"/rooms/ME407\"] > .room-card-top > .chip.state[data-state=\"RESERVED\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+     "a[href=\"/rooms/ME401\"] > .room-card-top > .chip.state[data-state=\"RESERVED\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+     "a[href=\"/rooms/ME402\"] > .room-card-top > .chip.state[data-state=\"RESERVED\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1"
+    ]
+   }
+  ],
+  "passes": 24
+ },
+ {
+  "scheme": "light",
+  "path": "/rooms/ME407",
+  "violations": [
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "n": 39,
+    "sample": [
+     ".state ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 9.0pt (12px), font weight: normal). Expected contrast ratio of 4.5:1",
+     "li:nth-child(1) > .small.chip[data-status=\"pending\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 8.6pt (11.5px), font weight: normal). Expected contrast ratio of 4.5:1",
+     "li:nth-child(2) > .small.chip[data-status=\"pending\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 8.6pt (11.5px), font weight: normal). Expected contrast ratio of 4.5:1"
+    ]
+   },
+   {
+    "id": "scrollable-region-focusable",
+    "impact": "serious",
+    "help": "Scrollable region must have keyboard access",
+    "n": 1,
+    "sample": [
+     ".log ::   Element should have focusable content"
+    ]
+   }
+  ],
+  "passes": 39
+ },
+ {
+  "scheme": "light",
+  "path": "/building",
+  "violations": [
+   {
+    "id": "aria-allowed-role",
+    "impact": "minor",
+    "help": "ARIA role should be appropriate for the element",
+    "n": 7,
+    "sample": [
+     ".sel ::   ARIA role listitem is not allowed for given element",
+     ".t-week[role=\"listitem\"]:nth-child(2) ::   ARIA role listitem is not allowed for given element",
+     ".t-week[role=\"listitem\"]:nth-child(3) ::   ARIA role listitem is not allowed for given element"
+    ]
+   },
+   {
+    "id": "aria-prohibited-attr",
+    "impact": "serious",
+    "help": "Elements must only use permitted ARIA attributes",
+    "n": 25,
+    "sample": [
+     "li:nth-child(1) > .b-day:nth-child(2) ::   aria-label attribute cannot be used on a div with no valid role attribute.",
+     "li:nth-child(1) > .b-day:nth-child(3) ::   aria-label attribute cannot be used on a div with no valid role attribute.",
+     "li:nth-child(1) > .b-day:nth-child(4) ::   aria-label attribute cannot be used on a div with no valid role attribute."
+    ]
+   },
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "n": 4,
+    "sample": [
+     "li:nth-child(1) > .b-room > .chip.small[data-state=\"RESERVED\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 8.6pt (11.5px), font weight: normal). Expected contrast ratio of 4.5:1",
+     "li:nth-child(2) > .b-room > .chip.small[data-state=\"RESERVED\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 8.6pt (11.5px), font weight: normal). Expected contrast ratio of 4.5:1",
+     "li:nth-child(3) > .b-room > .chip.small[data-state=\"RESERVED\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 8.6pt (11.5px), font weight: normal). Expected contrast ratio of 4.5:1"
+    ]
+   }
+  ],
+  "passes": 39
+ },
+ {
+  "scheme": "light",
+  "path": "/people",
+  "violations": [],
+  "passes": 32
+ },
+ {
+  "scheme": "light",
+  "path": "/timetable",
+  "violations": [
+   {
+    "id": "color-contrast",
+    "impact": "serious",
+    "help": "Elements must meet minimum color contrast ratio thresholds",
+    "n": 306,
+    "sample": [
+     "li:nth-child(1) > .chip.small[data-status=\"pending\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 8.6pt (11.5px), font weight: normal). Expected contrast ratio of 4.5:1",
+     "li:nth-child(2) > .chip.small[data-status=\"pending\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 8.6pt (11.5px), font weight: normal). Expected contrast ratio of 4.5:1",
+     "li:nth-child(3) > .chip.small[data-status=\"pending\"] ::   Element has insufficient color contrast of 3.61 (foreground color: #b26a00, background color: #e9eeeb, font size: 8.6pt (11.5px), font weight: normal). Expected contrast ratio of 4.5:1"
+    ]
+   }
+  ],
+  "passes": 31
+ },
+ {
+  "scheme": "dark",
+  "path": "/",
+  "violations": [],
+  "passes": 24
+ },
+ {
+  "scheme": "dark",
+  "path": "/rooms/ME407",
+  "violations": [
+   {
+    "id": "scrollable-region-focusable",
+    "impact": "serious",
+    "help": "Scrollable region must have keyboard access",
+    "n": 1,
+    "sample": [
+     ".log ::   Element should have focusable content"
+    ]
+   }
+  ],
+  "passes": 39
+ },
+ {
+  "scheme": "dark",
+  "path": "/building",
+  "violations": [
+   {
+    "id": "aria-allowed-role",
+    "impact": "minor",
+    "help": "ARIA role should be appropriate for the element",
+    "n": 7,
+    "sample": [
+     ".sel ::   ARIA role listitem is not allowed for given element",
+     ".t-week[role=\"listitem\"]:nth-child(2) ::   ARIA role listitem is not allowed for given element",
+     ".t-week[role=\"listitem\"]:nth-child(3) ::   ARIA role listitem is not allowed for given element"
+    ]
+   },
+   {
+    "id": "aria-prohibited-attr",
+    "impact": "serious",
+    "help": "Elements must only use permitted ARIA attributes",
+    "n": 25,
+    "sample": [
+     "li:nth-child(1) > .b-day:nth-child(2) ::   aria-label attribute cannot be used on a div with no valid role attribute.",
+     "li:nth-child(1) > .b-day:nth-child(3) ::   aria-label attribute cannot be used on a div with no valid role attribute.",
+     "li:nth-child(1) > .b-day:nth-child(4) ::   aria-label attribute cannot be used on a div with no valid role attribute."
+    ]
+   }
+  ],
+  "passes": 39
+ },
+ {
+  "scheme": "dark",
+  "path": "/people",
+  "violations": [],
+  "passes": 32
+ },
+ {
+  "scheme": "dark",
+  "path": "/timetable",
+  "violations": [],
+  "passes": 31
+ }
+]
