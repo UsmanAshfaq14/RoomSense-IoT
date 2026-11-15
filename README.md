@@ -2,10 +2,6 @@
 
 **A connected study room that heats, lights and ventilates only when someone is there.**
 
-IoT project of the Master 2 *Innovative Information Systems (2IS)*, Université Toulouse Capitole, course *Business Process Intelligence* (Mr Laurent Marsan and Mr Benoît Gaudou), November 2026.
-
-Team: **Usman Ashfaq**, **Aleksandra Ershova**, **Syed Zulqarnain Haider**
-
 ![Room page with live data](report-pack/screenshots/01-room-ME407-live-values-and-controls.jpg)
 
 ---
