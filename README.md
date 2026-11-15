@@ -49,7 +49,7 @@ The LEDs stand in for relays: the server's commands would drive a relay module w
 
 ## Wiring guide
 
-**[Open the interactive wiring guide](https://usmanashfaq14.github.io/RoomSense-IoT/wiring-guide.html)**: each step highlights its wires on a drawing of the Pi and both breadboards (source: [`docs/wiring-guide.html`](docs/wiring-guide.html)). The steps are also written out below.
+**[Open the interactive wiring guide](https://usmanashfaq14.github.io/RoomSense-IoT/wiring-guide.html)**: each step highlights its wires on a drawing of the Pi and both breadboards (source: [`docs/wiring-guide.html`](docs/wiring-guide.html)). Each step is shown as an image below.
 
 The circuit uses **one Raspberry Pi 3 and two breadboards**:
 - **Breadboard 1** holds the sensors (BME680, VEML7700, RDM6300 RFID). Its **top rails carry 3.3 V** and its **bottom rails carry 5 V**.
@@ -74,71 +74,46 @@ Pins below are **physical header pin numbers** (GPIO numbers in brackets, BCM). 
 | 15 | GPIO22 | Heating LED (board 2, col 9, row a) |
 | 33 | GPIO13 | Room-lights LED, PWM (board 2, col 15, row a) |
 
-### Step by step
+### Before you start
 
-> ⚠️ Switch the Pi off and unplug it while wiring. Have the circuit checked before the first power-on.
+- Switch the Pi off and unplug it while wiring. Have the circuit checked before the first power-on.
+- Enable I2C (`sudo raspi-config` → Interface Options → I2C) and the serial port for the RFID reader. Add `dtoverlay=pi3-disable-bt` and `enable_uart=1` to `/boot/config.txt`. In `raspi-config` → Serial, set login shell *No* and serial port *Yes*. Remove `console=serial0,115200` from `cmdline.txt`, run `sudo systemctl disable hciuart`, then reboot.
 
-**1. Prepare the Pi**
-- Enable I2C: `sudo raspi-config` → Interface Options → I2C.
-- Enable the serial port for the RFID reader: add `dtoverlay=pi3-disable-bt` and `enable_uart=1` to `/boot/config.txt`. In `raspi-config` → Serial, answer *login shell: No* and *serial port: Yes*. Remove `console=serial0,115200` from `cmdline.txt`, run `sudo systemctl disable hciuart`, then reboot.
+> ⚠️ **Three rules that protect the Pi**
+> 1. Never join breadboard 1's 3.3 V rail (top) to any 5 V rail.
+> 2. The RFID reader's TX is a 5 V signal: it reaches the Pi **only through the 2.2 kΩ / 3.3 kΩ divider**.
+> 3. Breadboard 2 takes its power from breadboard 1's **bottom (5 V)** rails, never the top 3.3 V rail.
 
-**2. Breadboard 1 power rails**
-- Pi pin 1 (3V3) → top + rail; pin 6 (GND) → top − rail. These power the two I2C sensors.
-- Pi pin 2 (5V) → bottom + rail; pin 14 (GND) → bottom − rail. These power the RFID reader and breadboard 2.
-- If your breadboard splits each rail in the middle, bridge the two halves with a short jumper of the same colour.
-- ⚠️ **Never join the two + rails.** 5 V on the 3.3 V rail can destroy the sensors and the Pi.
+In each image, the bright wires belong to that step, faded wires were added in earlier steps, and the card on the right lists every connection. For an interactive version, use the [live guide](https://usmanashfaq14.github.io/RoomSense-IoT/wiring-guide.html).
 
-**3. Climate sensor (BME680, Pimoroni)**
-- Plug its 5 pins into row e, columns 2–6, with `2-6V` in column 2.
-- Pi SDA (pin 3) → column 3, row c. Pi SCL (pin 5) → column 4, row c.
-- Column 2, row a → top + rail (3.3 V). Column 6, row a → top − rail.
-- INT (column 5) stays empty. I2C address: `0x76`.
+### Step 1: Breadboard 1 power rails
+![Step 1: power rails](docs/images/wiring/step-1-power.png)
 
-**4. Light sensor (VEML7700)**
-- Plug it into row e, columns 9–13, matching pins by their printed names.
-- VIN (column 9, row a) → top + rail (3.3 V). GND (column 11, row a) → top − rail.
-- Share the I2C bus: jumper column 4, row a → column 12, row a (SCL), and column 3, row b → column 13, row b (SDA).
-- 3Vo (column 10) stays empty: it is an output. I2C address: `0x10`. A TSL2591 uses the same four connections at `0x29`.
+### Step 2: Climate sensor (BME680)
+![Step 2: BME680](docs/images/wiring/step-2-bme680.png)
 
-**5. RFID reader (RDM6300, UART)**
-- The reader sits off the board, with the antenna coil in its 2-pin socket.
-- Reader +5V → bottom + rail. Reader GND → bottom − rail. Reader RX and the 3-pin LED header stay empty.
-- Reader TX → column 4, row j.
-- Voltage divider: a **2.2 kΩ** resistor from column 4 to column 8 (row h), and a **3.3 kΩ** resistor from column 8 to column 12 (row g). Then column 12, row j → bottom − rail.
-- Pi pin 10 (RXD) → column 8, row f (the middle of the divider).
-- ⚠️ The reader's TX is a **5 V signal**. It must reach the Pi **only through the divider**.
+### Step 3: Light sensor (VEML7700)
+![Step 3: VEML7700](docs/images/wiring/step-3-light-sensor.png)
 
-**6. Power breadboard 2**
-- Place breadboard 2 below breadboard 1, the same way round.
-- Red jumper: breadboard 1 bottom + rail (5 V, column 32) → breadboard 2 top + rail.
-- Black jumper: breadboard 1 bottom − rail (column 31) → breadboard 2 top − rail.
-- Breadboard 2 has no 3.3 V, so its bottom rails stay empty.
-- ⚠️ Take breadboard 2's power from breadboard 1's **bottom (5 V)** rails, never from the top 3.3 V rail.
+### Step 4: RFID reader (RDM6300) and voltage divider
+![Step 4: RFID reader](docs/images/wiring/step-4-rfid.png)
 
-**7. Three LEDs**
-- Status (green): Pi pin 13 → column 3. Heating (red): pin 15 → column 9. Room lights (yellow): pin 33 → column 15. All three go in row a, straight from the Pi header.
-- For each LED, a 220–330 Ω resistor bridges two columns in row c (3→5, 9→11, 15→17).
-- Put the LED's long leg (+) in the resistor's far column (5, 11, 17) and the short leg in the next column (6, 12, 18), both in row e.
-- Black jumpers: columns 6, 12 and 18 (row a) → top − rail.
+### Step 5: Power breadboard 2
+![Step 5: power breadboard 2](docs/images/wiring/step-5-power-breadboard-2.png)
 
-**8. Motion sensor (Adeept PIR)**
-- Plug its 3 pins into row e, columns 22–24 (VCC, OUT, GND). Check your module's labels and adjust if they differ.
-- VCC (column 22) → top + rail (5 V). GND (column 24) → top − rail.
-- Pi pin 11 (GPIO17) → OUT column 23, row c.
-- Turn its time-delay knob to the minimum. After power-up it needs 30–60 s to settle.
+### Step 6: Three LEDs (status, heating, room lights)
+![Step 6: LEDs](docs/images/wiring/step-6-leds.png)
 
-**9. FS90R continuous servo (ventilation fan)**
-- Push three male jumpers into the servo connector and plug them into row e, columns 28–30: brown, red, orange.
-- Brown (column 28) → top − rail. Red (column 29) → top + rail (5 V).
-- Pi pin 12 (GPIO18) → orange column 30, row c. On a black/red/white cable, black is GND and white is signal.
-- If it creeps when it should be stopped, adjust the stop value in the code.
-- ⚠️ If the Pi reboots when the servo starts, power the servo from its own 5 V supply and join that supply's GND to breadboard 2's − rail.
+### Step 7: Motion sensor (PIR)
+![Step 7: PIR](docs/images/wiring/step-7-pir.png)
 
-**10. Check, then power on**
-- No wire joins any 5 V rail to breadboard 1's 3.3 V rail.
-- The reader's TX reaches the Pi only through the divider.
-- All three LED long legs face their resistors.
-- Power on and run `python3 check_hardware.py all` in `server/`. It tests every part on its own, from the I2C scan (expects `0x10` and `0x76`) to an MQTT round trip.
+### Step 8: FS90R servo (ventilation fan)
+![Step 8: FS90R servo](docs/images/wiring/step-8-servo-fan.png)
+
+### Complete wiring
+![Complete wiring](docs/images/wiring/complete-wiring.png)
+
+When everything is wired, power on and run `python3 check_hardware.py all` in `server/`. It tests each part on its own, from the I2C scan (expects `0x10` and `0x76`) to an MQTT round trip.
 
 ## Room logic
 
