@@ -49,7 +49,7 @@ The LEDs stand in for relays: the server's commands would drive a relay module w
 
 ## Wiring guide
 
-An interactive, step-by-step wiring diagram is in [`docs/wiring-guide.html`](docs/wiring-guide.html). Download it and open it in a browser: each step highlights its wires on a drawing of the Pi and both breadboards. The steps are also written out below.
+**[Open the interactive wiring guide](https://usmanashfaq14.github.io/RoomSense-IoT/wiring-guide.html)**: each step highlights its wires on a drawing of the Pi and both breadboards (source: [`docs/wiring-guide.html`](docs/wiring-guide.html)). The steps are also written out below.
 
 The circuit uses **one Raspberry Pi 3 and two breadboards**:
 - **Breadboard 1** holds the sensors (BME680, VEML7700, RDM6300 RFID). Its **top rails carry 3.3 V** and its **bottom rails carry 5 V**.
